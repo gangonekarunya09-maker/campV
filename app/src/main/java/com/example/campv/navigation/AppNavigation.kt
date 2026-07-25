@@ -54,13 +54,15 @@ fun AppNavigation(
         // Auth
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoginSuccess = { role ->
-                    val destination = when (role) {
+                onLoginSuccess = { user ->
+
+                    val destination = when (user.role) {
                         AppConstants.ROLE_ADMIN -> Screen.AdminDashboard.route
                         AppConstants.ROLE_PRINCIPAL -> Screen.PrincipalDashboard.route
                         AppConstants.ROLE_PLATFORM_OWNER -> Screen.PlatformDashboard.route
                         else -> Screen.StudentDashboard.route
                     }
+
                     navController.navigate(destination) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }

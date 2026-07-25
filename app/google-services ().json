@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "116227631099",
+    "project_id": "campv-9d6bd",
+    "storage_bucket": "campv-9d6bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116227631099:android:bb4efe4d78c5a450c08d5e",
+        "android_client_info": {
+          "package_name": "com.example.campv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC92N1WSpevj9TA4SzN3GklM6hlsudjqU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

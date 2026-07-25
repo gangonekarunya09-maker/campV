@@ -1,6 +1,8 @@
 package com.example.campv
 
 import android.os.Bundle
+import com.google.firebase.FirebaseApp
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +16,7 @@ import com.example.campv.ui.theme.CampVTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         FirebaseManager.initialize(applicationContext)
 

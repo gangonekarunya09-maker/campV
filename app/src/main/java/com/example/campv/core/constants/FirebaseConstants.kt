@@ -1,7 +1,8 @@
 package com.example.campv.core.constants
 
 object FirebaseConstants {
-    // Firestore Collections
+
+    // Collections
     const val COLLECTION_USERS = "users"
     const val COLLECTION_COLLEGES = "colleges"
     const val COLLECTION_DEPARTMENTS = "departments"
@@ -10,8 +11,14 @@ object FirebaseConstants {
     const val COLLECTION_COMMENTS = "comments"
     const val COLLECTION_NOTIFICATIONS = "notifications"
 
-    // Storage Paths
+    // Storage
     const val STORAGE_PATH_DEMANDS = "demand_attachments"
     const val STORAGE_PATH_PROFILES = "profile_images"
     const val STORAGE_PATH_COLLEGE_DOCS = "college_documents"
+
+    // User Roles
+    const val ROLE_STUDENT = "STUDENT"
+    const val ROLE_ADMIN = "ADMIN"
+    const val ROLE_PRINCIPAL = "PRINCIPAL"
+    const val ROLE_PLATFORM_OWNER = "PLATFORM_OWNER"
 }

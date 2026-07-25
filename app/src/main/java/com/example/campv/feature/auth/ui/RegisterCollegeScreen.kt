@@ -117,14 +117,14 @@ fun RegisterCollegeScreen(
                 text = "Submit Application",
                 onClick = {
                     viewModel.registerCollege(
-                        collegeName = collegeName,
-                        code = code,
-                        domain = domain,
-                        address = address,
-                        principalName = principalName,
-                        principalEmail = principalEmail
+                        collegeName = collegeName.trim(),
+                        code = code.trim().uppercase(),
+                        domain = domain.trim().lowercase(),
+                        address = address.trim(),
+                        principalName = principalName.trim(),
+                        principalEmail = principalEmail.trim()
                     )
-                    onSubmitSuccess()
+
                 }
             )
         }

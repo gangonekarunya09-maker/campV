@@ -67,7 +67,12 @@ fun DemandDetailsScreen(
         ) {
             when (val state = demandState) {
                 is UiState.Loading -> LoadingScreen()
-                is UiState.Error -> ErrorScreen(message = state.message) { viewModel.loadDemandDetails(demandId) }
+                is UiState.Error -> ErrorScreen(
+                    message = state.message,
+                    onRetry = {
+                        viewModel.loadDemandDetails(demandId)
+                    }
+                )
                 is UiState.Success -> {
                     val demand = state.data
                     AppCard {

@@ -1,5 +1,6 @@
 package com.example.campv.data.repository
 
+import com.example.campv.core.session.SessionManager
 import com.example.campv.core.common.Result
 import com.example.campv.data.model.User
 import com.example.campv.data.remote.FirebaseAuthService
@@ -14,16 +15,56 @@ class AuthRepository(
     val currentFirebaseUser: FirebaseUser?
         get() = authService.currentUser
 
+    suspend fun getCurrentUserProfile(): Result<User> {
+        return try {
+            val firebaseUser = currentFirebaseUser
+                ?: return Result.Error(Exception("No authenticated user"))
+
+            val user = firestoreService.getDocument(
+                FirebaseConstants.COLLECTION_USERS,
+                firebaseUser.uid,
+                User::class.java
+            ) ?: return Result.Error(Exception("User profile not found."))
+
+            if (!user.approved) {
+                authService.logout()
+                return Result.Error(Exception("Account is not approved."))
+            }
+
+            if (!user.active) {
+                authService.logout()
+                return Result.Error(Exception("Account has been disabled."))
+            }
+
+            Result.Success(user)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
     suspend fun login(email: String, pass: String): Result<User> {
         return try {
             val fUser = authService.login(email, pass)
                 ?: return Result.Error(Exception("Authentication failed"))
+
             val user = firestoreService.getDocument(
                 FirebaseConstants.COLLECTION_USERS,
                 fUser.uid,
                 User::class.java
-            ) ?: User(id = fUser.uid, email = email, name = fUser.displayName ?: email)
+            ) ?: return Result.Error(
+                Exception("User profile not found.")
+            )
+            if (!user.approved) {
+                authService.logout()
+                return Result.Error(Exception("Account is not approved."))
+            }
+
+            if (!user.active) {
+                authService.logout()
+                return Result.Error(Exception("Account has been disabled."))
+            }
+
             Result.Success(user)
+
         } catch (e: Exception) {
             Result.Error(e)
         }
@@ -57,5 +98,6 @@ class AuthRepository(
 
     fun logout() {
         authService.logout()
+        SessionManager.clearSession()
     }
 }

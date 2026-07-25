@@ -33,4 +33,15 @@ class FirestoreService(
     suspend fun deleteDocument(collection: String, id: String) {
         firestore.collection(collection).document(id).delete().await()
     }
+
+    suspend fun updateDocument(
+        collection: String,
+        id: String,
+        updates: Map<String, Any>
+    ) {
+        firestore.collection(collection)
+            .document(id)
+            .update(updates)
+            .await()
+    }
 }

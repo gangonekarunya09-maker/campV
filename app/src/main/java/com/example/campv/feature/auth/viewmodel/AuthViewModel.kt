@@ -27,6 +27,7 @@ class AuthViewModel(
 
     fun login(email: String, pass: String) {
         if (!EmailValidator.isValid(email)) {
+            _uiState.value = AuthUiState.Idle
             _uiState.value = AuthUiState.Error("Please enter a valid email address.")
             return
         }
@@ -39,6 +40,7 @@ class AuthViewModel(
             _uiState.value = AuthUiState.Loading
             when (val result = authRepository.login(email, pass)) {
                 is Result.Success -> {
+                    SessionManager.clearSession()
                     SessionManager.setCurrentUser(result.data)
                     _uiState.value = AuthUiState.Success(result.data)
                 }

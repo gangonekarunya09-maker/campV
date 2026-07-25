@@ -71,7 +71,10 @@ fun ForgotPasswordScreen(
             AppButton(
                 text = "Send Reset Link",
                 onClick = {
-                    viewModel.forgotPassword(email, onEmailSent)
+                    viewModel.forgotPassword(
+                        email.trim(),
+                        onEmailSent
+                    )
                 }
             )
         }

@@ -1,5 +1,7 @@
 package com.example.campv.feature.auth.ui
 
+import androidx.compose.runtime.LaunchedEffect
+import com.example.campv.data.model.User
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,15 +33,19 @@ import com.example.campv.ui.components.AppTextField
 import com.example.campv.ui.components.AppTopBar
 
 @Composable
+
+
 fun LoginScreen(
-    onLoginSuccess: (role: String) -> Unit,
+    onLoginSuccess: (User) -> Unit,
     onRegisterCollegeClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     viewModel: AuthViewModel = viewModel()
-) {
+)  {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
+    val errorMessage = (uiState as? AuthUiState.Error)?.message
+    val isLoading = uiState is AuthUiState.Loading
 
     Scaffold(
         topBar = { AppTopBar(title = "Sign In to ${AppConstants.APP_NAME}") }
@@ -61,7 +67,7 @@ fun LoginScreen(
 
             AppTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { email = it.trimStart() },
                 label = "College Email",
                 placeholder = "user@college.edu"
             )
@@ -83,23 +89,25 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            if (uiState is AuthUiState.Error) {
+            errorMessage?.let {
                 Text(
-                    text = (uiState as AuthUiState.Error).message,
+                    text = it,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            if (uiState is AuthUiState.Loading) {
+            if (isLoading) {
                 LoadingScreen()
             } else {
                 AppButton(
                     text = "Sign In",
                     onClick = {
-                        viewModel.login(email, password)
+                        viewModel.login(
+                            email = email.trim(),
+                            pass = password
+                        )
                     }
                 )
             }
@@ -114,8 +122,10 @@ fun LoginScreen(
         }
     }
 
-    if (uiState is AuthUiState.Success) {
-        val user = (uiState as AuthUiState.Success).user
-        onLoginSuccess(user.role)
+    LaunchedEffect(uiState) {
+        when (val state = uiState) {
+            is AuthUiState.Success -> onLoginSuccess(state.user)
+            else -> Unit
+        }
     }
 }
