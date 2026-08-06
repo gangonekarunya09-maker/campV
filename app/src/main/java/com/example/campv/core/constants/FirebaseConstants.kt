@@ -15,6 +15,8 @@ object FirebaseConstants {
     const val STORAGE_PATH_DEMANDS = "demand_attachments"
     const val STORAGE_PATH_PROFILES = "profile_images"
     const val STORAGE_PATH_COLLEGE_DOCS = "college_documents"
+    const val COLLECTION_COLLEGE_REQUESTS = "college_requests"
+
 
     // User Roles
     const val ROLE_STUDENT = "STUDENT"

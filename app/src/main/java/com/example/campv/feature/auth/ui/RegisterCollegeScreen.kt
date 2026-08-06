@@ -19,8 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.campv.feature.auth.viewmodel.AuthUiState
-import com.example.campv.feature.auth.viewmodel.AuthViewModel
+
+import androidx.compose.runtime.LaunchedEffect
+import com.example.campv.feature.auth.viewmodel.CollegeRequestUiState
+import com.example.campv.feature.auth.viewmodel.CollegeRequestViewModel
 import com.example.campv.ui.components.AppButton
 import com.example.campv.ui.components.AppTextField
 import com.example.campv.ui.components.AppTopBar
@@ -29,7 +31,7 @@ import com.example.campv.ui.components.AppTopBar
 fun RegisterCollegeScreen(
     onBackClick: () -> Unit,
     onSubmitSuccess: () -> Unit,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: CollegeRequestViewModel = viewModel()
 ) {
     var collegeName by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
@@ -37,13 +39,23 @@ fun RegisterCollegeScreen(
     var address by remember { mutableStateOf("") }
     var principalName by remember { mutableStateOf("") }
     var principalEmail by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(uiState) {
+
+        if (uiState is CollegeRequestUiState.Success) {
+
+            onSubmitSuccess()
+
+            viewModel.resetState()
+        }
+    }
 
     Scaffold(
         topBar = {
             AppTopBar(
-                title = "Register College",
+                title = "Request College Registration",
                 onBackClick = onBackClick
             )
         }
@@ -56,7 +68,7 @@ fun RegisterCollegeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Apply for College Onboarding",
+                text = "Submit your college registration request.",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -103,10 +115,19 @@ fun RegisterCollegeScreen(
                 label = "Principal Official Email"
             )
             Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            if (uiState is AuthUiState.Error) {
+            AppTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = "Phone Number"
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (uiState is CollegeRequestUiState.Error) {
                 Text(
-                    text = (uiState as AuthUiState.Error).message,
+                    text =(uiState as CollegeRequestUiState.Error).message,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -114,19 +135,37 @@ fun RegisterCollegeScreen(
             }
 
             AppButton(
-                text = "Submit Application",
-                onClick = {
-                    viewModel.registerCollege(
-                        collegeName = collegeName.trim(),
-                        code = code.trim().uppercase(),
-                        domain = domain.trim().lowercase(),
-                        address = address.trim(),
-                        principalName = principalName.trim(),
-                        principalEmail = principalEmail.trim()
-                    )
+                text = if (uiState is CollegeRequestUiState.Loading)
+                    "Submitting..."
+                else
+                    "Submit Request",
 
+                onClick = {
+
+                    if (uiState !is CollegeRequestUiState.Loading) {
+
+                        viewModel.submitRequest(
+
+                            collegeName = collegeName.trim(),
+
+                            collegeCode = code.trim(),
+
+                            collegeDomain = domain.trim(),
+
+                            address = address.trim(),
+
+                            principalName = principalName.trim(),
+
+                            principalEmail = principalEmail.trim(),
+
+                            phone = phone.trim()
+                        )
+                    }
                 }
             )
+
+                }
+
         }
     }
-}
+
