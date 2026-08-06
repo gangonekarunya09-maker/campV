@@ -16,22 +16,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campv.core.session.SessionManager
-import com.example.campv.feature.student.viewmodel.DemandViewModel
 import com.example.campv.ui.components.AppButton
 import com.example.campv.ui.components.AppTextField
 import com.example.campv.ui.components.AppTopBar
+import com.example.campv.feature.student.viewmodel.CreateDemandUiState
+import com.example.campv.feature.student.viewmodel.CreateDemandViewModel
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun CreateDemandScreen(
     onBackClick: () -> Unit,
     onDemandCreated: () -> Unit,
-    viewModel: DemandViewModel = viewModel()
+    viewModel: CreateDemandViewModel = viewModel()
 ) {
     val currentUser = SessionManager.currentUser.collectAsState().value
+    val uiState by viewModel.uiState.collectAsState()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    LaunchedEffect(uiState) {
+        when (uiState) {
 
+            CreateDemandUiState.Success -> {
+                viewModel.resetState()
+                onDemandCreated()
+            }
+
+            else -> Unit
+        }
+    }
     Scaffold(
         topBar = {
             AppTopBar(
@@ -72,7 +87,11 @@ fun CreateDemandScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             AppButton(
-                text = "Submit Demand",
+                text = if (uiState is CreateDemandUiState.Loading)
+                    "Submitting..."
+                else
+                    "Submit Demand",
+                enabled = uiState !is CreateDemandUiState.Loading,
                 onClick = {
                     currentUser?.let { user ->
                         viewModel.createDemand(
@@ -82,14 +101,20 @@ fun CreateDemandScreen(
                             collegeId = user.collegeId,
                             departmentId = "",
                             studentId = user.id,
-                            studentName = user.name,
-                            onSuccess = {
-                                onDemandCreated()
-                            }
+                            studentName = user.name
                         )
                     }
                 }
             )
+
+            if (uiState is CreateDemandUiState.Error) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = (uiState as CreateDemandUiState.Error).message,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

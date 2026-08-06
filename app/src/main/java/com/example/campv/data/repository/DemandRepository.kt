@@ -44,17 +44,42 @@ class DemandRepository(
         }
     }
 
-    suspend fun updateDemandStatus(demandId: String, status: String, adminResponse: String): Result<Unit> {
+    suspend fun updateDemandStatus(
+        demandId: String,
+        status: String,
+        adminResponse: String
+    ): Result<Unit> {
         return try {
-            val demand = firestoreService.getDocument(FirebaseConstants.COLLECTION_DEMANDS, demandId, Demand::class.java)
-            if (demand != null) {
-                firestoreService.setDocument(
-                    FirebaseConstants.COLLECTION_DEMANDS,
-                    demandId,
-                    demand.copy(status = status, adminResponse = adminResponse)
+
+            firestoreService.updateDocument(
+                collection = FirebaseConstants.COLLECTION_DEMANDS,
+                id = demandId,
+                updates = mapOf(
+                    "status" to status,
+                    "adminResponse" to adminResponse
                 )
-            }
+            )
+
             Result.Success(Unit)
+
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+    suspend fun updateDemand(
+        demandId: String,
+        updates: Map<String, Any>
+    ): Result<Unit> {
+        return try {
+
+            firestoreService.updateDocument(
+                collection = FirebaseConstants.COLLECTION_DEMANDS,
+                id = demandId,
+                updates = updates
+            )
+
+            Result.Success(Unit)
+
         } catch (e: Exception) {
             Result.Error(e)
         }

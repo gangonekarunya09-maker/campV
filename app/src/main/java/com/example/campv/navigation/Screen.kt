@@ -18,7 +18,12 @@ sealed class Screen(val route: String) {
     // Admin Routes
     data object AdminDashboard : Screen("admin_dashboard")
     data object ManageDemands : Screen("manage_demands")
+    data object AdminDemandDetails : Screen("admin_demand_details/{demandId}") {
+        fun createRoute(demandId: String) = "admin_demand_details/$demandId"
+    }
     data object Reports : Screen("reports")
+    data object Analytics : Screen("analytics")
+    data object AdminProfile : Screen("admin_profile")
 
     // Principal Routes
     data object PrincipalDashboard : Screen("principal_dashboard")

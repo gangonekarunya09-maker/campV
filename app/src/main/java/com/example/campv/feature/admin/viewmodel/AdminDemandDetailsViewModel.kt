@@ -1,4 +1,4 @@
-package com.example.campv.feature.student.viewmodel
+package com.example.campv.feature.admin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class DemandViewModel(
+class AdminDemandDetailsViewModel(
     private val demandRepository: DemandRepository = DemandRepository(),
     private val commentRepository: CommentRepository = CommentRepository()
 ) : ViewModel() {
@@ -60,9 +60,16 @@ class DemandViewModel(
         }
     }
 
+    fun updateDemandStatus(demandId: String, status: String, adminResponse: String) {
+        viewModelScope.launch {
+            when (demandRepository.updateDemandStatus(demandId, status, adminResponse)) {
+                is Result.Success -> loadDemandDetails(demandId)
+                else -> {}
+            }
+        }
+    }
 
-
-    fun addComment(
+    fun addOfficialComment(
         demandId: String,
         userId: String,
         userName: String,

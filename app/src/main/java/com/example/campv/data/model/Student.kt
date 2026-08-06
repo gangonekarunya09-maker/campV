@@ -8,7 +8,7 @@ data class Student(
     override val profileImageUrl: String = "",
     override val createdAt: Long = System.currentTimeMillis(),
     val studentId: String = "",
-    val departmentId: String = "",
+    override val departmentId: String = "",
     val yearOfStudy: Int = 1
 ) : User(
     id = id,

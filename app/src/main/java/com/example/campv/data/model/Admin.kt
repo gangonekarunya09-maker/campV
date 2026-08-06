@@ -7,7 +7,7 @@ data class Admin(
     override val collegeId: String = "",
     override val profileImageUrl: String = "",
     override val createdAt: Long = System.currentTimeMillis(),
-    val departmentId: String = ""
+    override val departmentId: String = ""
 ) : User(
     id = id,
     email = email,

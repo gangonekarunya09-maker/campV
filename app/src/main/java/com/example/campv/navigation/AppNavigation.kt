@@ -43,13 +43,31 @@ fun AppNavigation(
         // Splash
         composable(Screen.Splash.route) {
             SplashScreen(
-                onSplashFinished = {
+                onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(Screen.Splash.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavigateToDashboard = { role ->
+
+                    val destination = when (role) {
+                        AppConstants.ROLE_ADMIN -> Screen.AdminDashboard.route
+                        AppConstants.ROLE_PRINCIPAL -> Screen.PrincipalDashboard.route
+                        AppConstants.ROLE_PLATFORM_OWNER -> Screen.PlatformDashboard.route
+                        else -> Screen.StudentDashboard.route
+                    }
+
+                    navController.navigate(destination) {
+                        popUpTo(Screen.Splash.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )
         }
+
 
         // Auth
         composable(Screen.Login.route) {
@@ -144,7 +162,23 @@ fun AppNavigation(
         }
 
         composable(Screen.ManageDemands.route) {
-            ManageDemandsScreen(onBackClick = { navController.popBackStack() })
+            ManageDemandsScreen(
+                onBackClick = { navController.popBackStack() },
+                onDemandClick = { demandId ->
+                    navController.navigate(Screen.AdminDemandDetails.createRoute(demandId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.AdminDemandDetails.route,
+            arguments = listOf(navArgument("demandId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val demandId = backStackEntry.arguments?.getString("demandId") ?: ""
+            com.example.campv.feature.admin.ui.AdminDemandDetailsScreen(
+                demandId = demandId,
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.Reports.route) {

@@ -40,6 +40,8 @@ class SplashViewModel(
                 }
 
                 is Result.Error -> {
+
+
                     SessionManager.clearSession()
                     _uiState.value = SplashUiState.Login
                 }
